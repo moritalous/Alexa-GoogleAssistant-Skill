@@ -35,10 +35,11 @@ from googlesamples.assistant.grpc import (
 api_endpoint = 'embeddedassistant.googleapis.com'
 grpc_deadline = 60 * 3 + 5
 
-credentials_file = os.getenv('GA_CREDENTIALS', 'credentials.json')
-lang = os.getenv('GA_LANG', 'ja-JP')
+credentials_json = os.getenv('GA_CREDENTIALS','{"token_uri": "token_uri", "client_id": "client_id", "refresh_token": "refresh_token", "scopes": ["scopes"], "client_secret": "client_secret"}')
+lang = os.getenv('GA_LANG', 'en-US') # en-US, ja-JP
 device_model_id = os.getenv('GA_DEVICE_MODEL_ID', 'XXXXX')
 device_id = os.getenv('GA_DEVICE_ID', 'XXXXX')
+error_msg=os.getenv('GA_ERROR_MSG', 'No Response')
 
 # Setup logging.
 logging.basicConfig(level=logging.INFO)
@@ -46,13 +47,10 @@ logging.basicConfig(level=logging.INFO)
 # --------------- 
 
 def assist(text_query):
-
-    # Load OAuth 2.0 credentials.
-    with open(credentials_file, 'r') as f:
-        credentials = google.oauth2.credentials.Credentials(token=None,
-                                                            **json.load(f))
-        http_request = google.auth.transport.requests.Request()
-        credentials.refresh(http_request)
+    credentials = google.oauth2.credentials.Credentials(token=None,
+                                                        **json.loads(credentials_json))
+    http_request = google.auth.transport.requests.Request()
+    credentials.refresh(http_request)
 
     # Create an authorized gRPC channel.
     grpc_channel = google.auth.transport.grpc.secure_authorized_channel(
@@ -73,8 +71,8 @@ def build_speechlet_response(title, output, reprompt_text, should_end_session):
         },
         'card': {
             'type': 'Simple',
-            'title': "SessionSpeechlet - " + title,
-            'content': "SessionSpeechlet - " + output
+            'title': title,
+            'content': output
         },
         'reprompt': {
             'outputSpeech': {
@@ -84,7 +82,6 @@ def build_speechlet_response(title, output, reprompt_text, should_end_session):
         },
         'shouldEndSession': should_end_session
     }
-
 
 def build_response(session_attributes, speechlet_response):
     return {
@@ -102,7 +99,7 @@ def lambda_handler(event, context):
     text_response = assist(text_query=text_query)
     if text_response == None:
         logging.info('Response text is None')
-        text_response = '応答がありませんでした'
+        text_response = error_msg
 
     logging.info('Response text is %s', text_response)
 
@@ -121,7 +118,7 @@ if __name__ == '__main__':
             'intent':{
                 'slots':{
                     'q':{
-                        'value':'明日の天気は'
+                        'value':'What time is it'
                     }
                 }
             }
