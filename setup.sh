@@ -10,3 +10,5 @@ rm -rf ffmpeg-release-64bit-static.tar.xz
 
 # pip install
 pip install -r requirements.txt -t ./
+# remove unsed module
+rm -rf concurrent/
