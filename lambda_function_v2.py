@@ -230,8 +230,14 @@ def lambda_handler(event, context):
 
     if event['request']['type'] == "SessionEndedRequest":
         return on_session_ended(event['request'], event['session'])
+
+    text_query='Hello'
+    # if event['request']['type'] == "LaunchRequest":
+    #     text_query='Hello'
+    if event['request']['type'] == "IntentRequest":
+        if event['request']['intent']['slots']['q']['value']:
+            text_query=event['request']['intent']['slots']['q']['value']
     
-    text_query=event['request']['intent']['slots']['q']['value']
     logging.info('Query text is %s', text_query)
 
     return assist(text_query=text_query)
