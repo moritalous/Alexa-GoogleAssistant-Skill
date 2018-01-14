@@ -117,12 +117,12 @@ class SampleTextAssistant(object):
             if resp.dialog_state_out.supplemental_display_text:
                 display_text = resp.dialog_state_out.supplemental_display_text
         
-        w = wave.Wave_write("output.wav")
-        w.setnchannels(1)
-        w.setsampwidth(2)
-        w.setframerate(16000)
-        w.writeframes(response_audio_data)
-        w.close()
+            w = wave.Wave_write("output.wav")
+            w.setnchannels(1)
+            w.setsampwidth(2)
+            w.setframerate(16000)
+            w.writeframes(response_audio_data)
+            w.close()
 
         return display_text 
 # ---------------
