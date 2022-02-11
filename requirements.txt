@@ -13,7 +13,7 @@ grpcio==1.8.2
 idna==2.6
 monotonic==1.4
 oauthlib==2.0.6
-protobuf==3.5.1
+protobuf==3.15.0
 pyasn1==0.4.2
 pyasn1-modules==0.2.1
 pycparser==2.18
